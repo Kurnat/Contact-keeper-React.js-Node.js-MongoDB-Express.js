@@ -1,0 +1,4 @@
+{
+  "mongoURI": "mongodb+srv://beda21:1e47LCvUMzVRKyMZ@cluster0-4zdov.mongodb.net/contact_ceeper?retryWrites=true&w=majority",
+  "jwtSecret":"khgyff4d"
+}
