@@ -1,7 +1,6 @@
 import {
   ADD_CONTACT,
   DELETE_CONTACT,
-  SET_ALERT,
   SET_CURRENT,
   CLEAR_CURRENT,
   UPDATE_COUNT,
@@ -30,6 +29,17 @@ export default (state, action) => {
     case UPDATE_COUNT: return {
       ...state,
       contacts: state.contacts.map(contact => contact.id === action.payload.id ? action.payload : contact)
+    }
+    case FILTER_CONTACTS: return {
+      ...state, 
+      filtered: state.contacts.filter(contact => {
+        const regExp = new RegExp(`${action.payload}`, 'gi');
+        return contact.name.match(regExp) || contact.email.match(regExp);
+      })
+    }
+    case CLEAR_FILTER: return {
+      ...state,
+      filtered: null
     }
     default: return state;
   }
