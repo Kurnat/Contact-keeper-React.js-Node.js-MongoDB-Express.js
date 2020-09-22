@@ -15,14 +15,14 @@ const router = Router();
  *  ============================  */
 router.post('/', [
   check('name', 'name is required').not().isEmpty(),
-  check('email', 'Please i include a valid email').isEmail(),
+  check('email', 'Please a include a valid email').isEmail(),
   check('password', 'Please enter a password whit 6 or more characters')
     .isLength({min: 6})
 ], 
 async (req, res) => {
   const errors = validationResult(req);
   if(!errors.isEmpty()) {
-    return res.status(400).json({errors: errors.array()})
+    return res.status(400).json({errors: errors.array()});
   }
 
   const { name, email, password} = req.body;
@@ -31,7 +31,7 @@ async (req, res) => {
     let user = await User.findOne({email});
 
     if (user) {
-      return res.status(400).json({msg: 'User already exists'});
+      return res.status(403).json({msg: 'User already exists'});
     }
 
     user = new User({
@@ -47,7 +47,9 @@ async (req, res) => {
     await user.save();
 
     const payload = {
-      id: user.id
+      user: {
+        id: user.id
+      }
     }
 
     jwt.sign(
@@ -56,12 +58,11 @@ async (req, res) => {
       {
         expiresIn: 360000
       }, 
-      (res, token) => {
-      if(err) throw err;
-      res.json({token})
+      (err, token) => {
+        if(err) throw err;
+        res.json({token});
     });
   } catch (err) {
-    console.error(err.message);
     res.status(500).send('Server Error')
   }
 });

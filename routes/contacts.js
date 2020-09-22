@@ -45,9 +45,9 @@ router.post('/', [
     const {name, email, phone, type} = req.body;
     try {
       const newContact = new Contact({name, email, phone, type, user: req.user.id});
-      const constact = await newContact.save();
+      const contact = await newContact.save();
 
-      res.status(201).json({constact});
+      res.status(201).json(contact);
     } catch (err) {
       console.error(err)
       res.status(500),send('Server Error')
@@ -59,8 +59,10 @@ router.post('/', [
  *  @descrip  Update contact
  *  @access   Private
  *  ============================  */
-router.put('/:id', (req, res) => {
-  res.send('Update contact');
+router.put('/:id', auth, async (req, res) => {
+  const updatedContact = await Contact.findByIdAndUpdate(req.params.id, req.body, { new: true });
+  
+  res.status(200).json(updatedContact);
 });
 
 /** ============================
@@ -68,8 +70,10 @@ router.put('/:id', (req, res) => {
  *  @descrip  Delete contact
  *  @access   Private
  *  ============================  */
-router.delete('/:id', (req, res) => {
-  res.send('Delete contact');
+router.delete('/:id', auth, async (req, res) => {
+  await Contact.deleteOne({_id: req.params.id});
+
+  res.status(200).json({});
 });
 
 module.exports = router;
